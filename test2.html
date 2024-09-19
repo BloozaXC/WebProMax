@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(51, 51, 51, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        #codeDisplay {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #000000, #1a1a1a, #333333, #4d4d4d);
+            background-size: 100% 200%;
+            animation: gradientAnimation 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TITAN KEY</h1>
+        <h2>By Team TITAN</h2>
+        <div id="codeDisplay"></div>
+    </div>
+    <script>
+        const codes = [
+            "TITAN-3H-S51E-IIOI",
+            "TITAN-3H-H45L-D4K4",
+            // Add more codes here
+        ];
+
+        function generateRandomCode() {
+            const randomIndex = Math.floor(Math.random() * codes.length);
+            return codes[randomIndex];
+        }
+
+        function updatePageWithCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeFromUrl = urlParams.get('code');
+            const storedCode = sessionStorage.getItem('storedCode');
+            const now = new Date().getTime();
+            const timeSinceLastVisit = now - (sessionStorage.getItem('lastVisit') || 0);
+            const TIME_LIMIT = 30 * 60 * 1000; // 30 minutes for example
+
+            if (codeFromUrl) {
+                // If code is provided in the URL, display it and store it
+                document.getElementById('codeDisplay').innerText = codeFromUrl;
+                sessionStorage.setItem('storedCode', codeFromUrl);
+                sessionStorage.setItem('lastVisit', now);
+            } else if (storedCode && timeSinceLastVisit < TIME_LIMIT) {
+                // If code is stored and within TIME_LIMIT, display it
+                document.getElementById('codeDisplay').innerText = storedCode;
+            } else {
+                // Generate a new code and update the URL
+                const newCode = generateRandomCode();
+                document.getElementById('codeDisplay').innerText = newCode;
+                sessionStorage.setItem('storedCode', newCode);
+                sessionStorage.setItem('lastVisit', now);
+                const newUrl = `${window.location.href.split('?')[0]}?code=${newCode}`;
+                history.replaceState(null, '', newUrl);
+            }
+        }
+
+        window.onload = updatePageWithCode;
+    </script>
+</body>
+</html>
